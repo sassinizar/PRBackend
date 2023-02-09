@@ -10,12 +10,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
+//@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class)
 public class Mission implements Serializable{
 
 	@Id
@@ -25,15 +31,21 @@ public class Mission implements Serializable{
 	private String destination;
 	private String motif;
 	
-	 @ManyToOne
-	 private Personne person;
+	@ManyToOne
+/*	@JoinColumn(
+		    name = "person_cin",
+		    nullable = false
+		    )
+*/
+	private Personne person;
 	
 	public Personne getPerson() {
 		return person;
 	}
-	public void setPersonne(Personne personne) {
-		this.person = personne;
+	public void setPerson(Personne person) {
+		this.person = person;
 	}
+	/*
 	public Mission( Date dateDebut, Date dateFin, String destination, String motif) {
 		super();
 		this.dateDebut = dateDebut;
@@ -44,6 +56,7 @@ public class Mission implements Serializable{
 	public Mission() {
 		// TODO Auto-generated constructor stub
 	}
+	*/
 	public String getNumOrd() {
 		return numOrd;
 	}

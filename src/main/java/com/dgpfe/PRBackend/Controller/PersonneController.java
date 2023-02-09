@@ -3,7 +3,6 @@ package com.dgpfe.PRBackend.Controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,51 +14,81 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.dgpfe.PRBackend.Exception.ResourceNotFoundException;
 import com.dgpfe.PRBackend.Model.Mission;
+import com.dgpfe.PRBackend.Model.Passeport;
 import com.dgpfe.PRBackend.Model.Personne;
-import com.dgpfe.PRBackend.Repository.MissionRepository;
-import com.dgpfe.PRBackend.Repository.PasseportRepository;
 import com.dgpfe.PRBackend.Repository.PersonneRepository;
+import com.dgpfe.PRBackend.Request.PersonneRequest;
+import com.dgpfe.PRBackend.Service.PersonneServices;
 
 @RestController
-@CrossOrigin(origins ="http://localhost:4200")
+@CrossOrigin(origins="*")
 @RequestMapping("/api/v1/")
 public class PersonneController {
 
-	@Autowired
-	private PersonneRepository personneRepository;
 	
 	@Autowired
-	private MissionRepository missionRepository;
+	private PersonneServices personneService;
 	
-	@Autowired
-	private PasseportRepository passeportRepository;
+	 //add person
+	@PostMapping("/person")
+	public Personne addPerson(@RequestBody Personne personneRequest) {
+		return personneService.addPerson(personneRequest);
+	}
 	
-	//get All persons
-	@CrossOrigin(origins = "http://localhost:4200")
-	@GetMapping("/personnes")
-	public List<Personne> getAllPersonnes(){
-		return personneRepository.findAll();
+	//get person by id
+	@GetMapping("/personne/{cin}")
+	public ResponseEntity<Personne> getPersonByCin(@PathVariable("cin") long cin){
+		return personneService.personById(cin);
 	}
 
+	//get All persons
+	@GetMapping("/personnes")
+	public List<Personne> AllPersonnes(){
+		return personneService.getAllPersonnes();
+	}
 	
+	@PutMapping("/personnes/{cin}")
+	public ResponseEntity<Personne> updatePersonne(@PathVariable("cin") long cin, @RequestBody Personne personne) {
+		return personneService.updatePerson(cin, personne);
+	  }
+
+	@DeleteMapping("/personnes/{cin}")
+	public ResponseEntity<HttpStatus> deleteAllTutorials(@PathVariable("cin") long cin) {
+	    return personneService.deletePersonne(cin);
+	  }
+	 
+/*	
 	//save a person
 	@PostMapping("/personnes")
 	public Personne createPersonne(@RequestBody Personne personne) {
 		return personneRepository.save(personne);
+				
 	}
+	
+	
 	
 	//get persons by cin
 	@GetMapping("/personnes/{cin}")
 	public ResponseEntity<Personne> getPersonneById(@PathVariable long cin){
 		Personne personne = personneRepository.findById(cin)
-				.orElseThrow(() -> new ResourceNotFoundException("personne n'existe pas :"+cin));
+				.orElseThrow(() -> new ResourceNotFoundException("personne n'existe pas :" + cin));
 		return ResponseEntity.ok(personne);
 	}
+
+	//get all missions of the person
+	@GetMapping("/personnes/{cin}/missions")
+	public List<Mission> getMissionsByPerson(@PathVariable("cin") long  cin){		
+		return personneRepository.getMissionsByPersonne(cin);	
+	}
+
+	//get all passports of the person
+		@GetMapping("/personnes/{cin}/passeports")
+		public List<Passeport> getPasseportsByPerson(@PathVariable("cin") long  cin){		
+			return personneRepository.getPasseportsByPersonne(cin);	
+		}
 	
 	
 	
@@ -89,6 +118,7 @@ public class PersonneController {
 		response.put("deleted", Boolean.TRUE);
 		return ResponseEntity.ok(response);
 	}
+*/	
 	
 
 }

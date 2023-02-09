@@ -9,8 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.dgpfe.PRBackend.Model.Mission;
 
 
-@Repository
 public interface MissionRepository extends JpaRepository<Mission, String>{
 
-
+	List<Mission> findByPersonCin(Long cin);
 }

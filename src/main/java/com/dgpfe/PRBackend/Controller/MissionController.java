@@ -3,6 +3,7 @@ package com.dgpfe.PRBackend.Controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletionService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,67 +24,56 @@ import com.dgpfe.PRBackend.Model.Mission;
 import com.dgpfe.PRBackend.Model.Personne;
 import com.dgpfe.PRBackend.Repository.MissionRepository;
 import com.dgpfe.PRBackend.Repository.PersonneRepository;
+import com.dgpfe.PRBackend.Service.MissionServices;
 
 @RestController
-@CrossOrigin(origins ="http://localhost:4200")
+@CrossOrigin(origins ="*")
 @RequestMapping("/api/v1/")
 public class MissionController {
 
 	@Autowired
 	private MissionRepository missionRepository;
 	
-	@Autowired 
-	private PersonneRepository perssoneRepository;
-	
+	@Autowired
+	private MissionServices missionService;
 	
 	//get All persons
-	@CrossOrigin(origins ="http://localhost:4200")
 	@GetMapping("/missions")
 	public List<Mission> getAllMissions(){
-		return missionRepository.findAll();
+		return missionService.getAllMissions();
 		
 	}
 	
 	//save a mission
-	@PostMapping("/missions")
-	public Mission createMission(@RequestBody Mission mission) {
-		return missionRepository.save(mission);
+	@PostMapping("/personne/{id}/mission")
+	public Mission createMission(@PathVariable("id") long cin, @RequestBody Mission mission) {
+		return missionService.createMission(cin,mission);
 	}
 	
-	/*
-	//get persons by numord
-	@GetMapping("/personnes/{personneID}/missions")
-	  public ResponseEntity<List<Mission>> getAllMissionsByPersonneId(@PathVariable(value = "personneID") Long personneID) {
-
-	    List<Mission> missions = missionRepository.findByPersonneId(personneID);
-	    return new ResponseEntity<>(missions, HttpStatus.OK);
+	//get all missions by person cin
+	 @GetMapping("/personne/{cin}/missions")
+     public ResponseEntity<List<Mission>> AllMissionsBypersonId(@PathVariable("cin") Long cin) {
+		 return missionService.getAllMissionsByPersonId(cin);
+    }
+	 	
+	//get mission by numord
+	@GetMapping("/mission/{missionID}")
+	  public ResponseEntity<Mission> getAllMissionsByPersonneId(@PathVariable("missionID") String missionID) {
+		return missionService.MissionsById(missionID);
 	  }
-	*/
+	
 	//update mission
-	@PutMapping("/mission/{id}")
-	public ResponseEntity<Mission> updateMission(@PathVariable String numord, @RequestBody Mission missionDetails){
-		Mission mission = missionRepository.findById(numord)
-				.orElseThrow(() -> new ResourceNotFoundException("mission n'existe pas:"+numord));		
-		mission.setDateDebut(missionDetails.getDateDebut());
-		mission.setDateFin(missionDetails.getDateFin());
-		mission.setDestination(missionDetails.getDestination());
-		mission.setMotif(missionDetails.getMotif());
-		
-		Mission updateMission = missionRepository.save(mission);
-		return ResponseEntity.ok(updateMission);
+	@PutMapping("/mission/{numord}")
+	public ResponseEntity<Mission> updateMission(@PathVariable("numord") String numord, @RequestBody Mission missionDetails){
+		return missionService.updateMission(numord, missionDetails);
 	}
 	
 	//delete misssion rest api
-	@DeleteMapping("/mission/{id}")
-	public ResponseEntity<Map<String, Boolean>> deleteMission(@PathVariable String numord){
-		Mission mission = missionRepository.findById(numord)
-				.orElseThrow(() -> new ResourceNotFoundException("Mission n'existe pas :" + numord) );
+	@DeleteMapping("/mission/{numOrd}")
+	public ResponseEntity<Map<String, Boolean>> deleteMission(@PathVariable("numOrd") String numOrd){
 		
-		missionRepository.delete(mission);
-		Map<String, Boolean> response = new HashMap<>();
-		response.put("deleted", Boolean.TRUE);
-		return ResponseEntity.ok(response);
+		return missionService.deleteMission(numOrd);
 	}
 	
-	
+
 }

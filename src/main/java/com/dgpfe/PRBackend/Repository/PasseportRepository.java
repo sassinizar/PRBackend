@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.dgpfe.PRBackend.Model.Passeport;
 
-@Repository
+
 public interface PasseportRepository extends JpaRepository<Passeport, String>{
+	List<Passeport> findByPersonneCin(long cin);
 }

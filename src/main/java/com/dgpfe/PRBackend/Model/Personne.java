@@ -12,8 +12,13 @@ import javax.persistence.OneToMany;
 
 import org.hibernate.mapping.Set;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 
 @Entity
+//@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class)
 public class Personne implements Serializable{
 
 	@Id
@@ -23,28 +28,33 @@ public class Personne implements Serializable{
 	private String fonction;
 	private String direction;
 
-	@OneToMany(mappedBy="personne", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Collection<Passeport> passeports;
+	@JsonIgnore
+	@OneToMany
+	@JoinColumn(name = "personne_cin")
+	private List<Passeport> passeports = new ArrayList<>();
 	
-	@OneToMany(mappedBy="person", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private Collection<Mission> missions;
+	@JsonIgnore
+	@OneToMany
+	@JoinColumn(name = "person_cin")
+	private List<Mission> missions = new ArrayList<>();
 	
-	public Collection<Passeport> getPasseports() {
+	
+	public List<Passeport> getPasseports() {
 		return passeports;
 	}
 
-	public void setPasseports(Collection<Passeport> passeports) {
+	public void setPasseports(List<Passeport> passeports) {
 		this.passeports = passeports;
 	}
 
-	public Collection<Mission> getMissions() {
+	public List<Mission> getMissions() {
 		return missions;
 	}
 
-	public void setMissions(Collection<Mission> missions) {
+	public void setMissions(List<Mission> missions) {
 		this.missions = missions;
 	}
-
+/*
 	public Personne( String nom, String prenom, String fonction, String direction) {
 		super();
 		this.nom = nom;
@@ -52,12 +62,11 @@ public class Personne implements Serializable{
 		this.fonction = fonction;
 		this.direction = direction;
 	}
-
 	public Personne() {
 		
 		// TODO Auto-generated constructor stub
 	}
-
+*/
 	@Override
 	public String toString() {
 		return "Personne [cin=" + cin + ", nom=" + nom + ", prenom=" + prenom + ", fonction=" + fonction
@@ -103,6 +112,4 @@ public class Personne implements Serializable{
 	public void setDirection(String direction) {
 		this.direction = direction;
 	}
-	
-	
 }
